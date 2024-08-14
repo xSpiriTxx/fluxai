@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+requests
+beautifulsoup4
+lxml
+numpy  # If you plan to process data before sending it to FAISS or another service
+pandas  # Optional, if you need to handle tabular data or more complex data manipulation

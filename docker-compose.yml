@@ -1,0 +1,47 @@
+version: '3.8'
+services:
+  api-server:
+    build: ./api-server
+    ports:
+      - "8000:8000"
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    depends_on:
+      - model-server
+      - faiss-server
+
+  model-server:
+    build: ./model-server
+    ports:
+      - "8501:8501"
+    environment:
+      - HUGGINGFACEHUB_API_TOKEN=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
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+
+  faiss-server:
+    build: ./faiss
+    ports:
+      - "8081:8081"
+    volumes:
+      - faiss-data:/app  # Persist FAISS data across container restarts
+
+  scraper:
+    build: ./scraper
+    ports:
+      - "8002:8002"
+    depends_on:
+      - faiss-server
+
+volumes:
+  faiss-data:
